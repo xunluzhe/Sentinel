@@ -46,6 +46,9 @@ public class AuthController {
     @Value("${auth.password:sentinel}")
     private String authPassword;
 
+    @Value("${cookie.expire}")
+    private Integer expire;
+
     @Autowired
     private AuthService<HttpServletRequest> authService;
 
@@ -69,7 +72,7 @@ public class AuthController {
             LOGGER.error("Login failed: Invalid username or password, username=" + username);
             return Result.ofFail(-1, "Invalid username or password");
         }
-
+        request.getSession().setMaxInactiveInterval(expire);
         AuthService.AuthUser authUser = new SimpleWebAuthServiceImpl.SimpleWebAuthUserImpl(username);
         request.getSession().setAttribute(SimpleWebAuthServiceImpl.WEB_SESSION_KEY, authUser);
         return Result.ofSuccess(authUser);
