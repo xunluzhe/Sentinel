@@ -45,6 +45,9 @@ public class AuthController {
 
     @Value("${auth.password:sentinel}")
     private String authPassword;
+    
+    @Value("${cookie.expire}")
+    private Integer expire;
 
     @Autowired
     private AuthService<HttpServletRequest> authService;
@@ -71,6 +74,7 @@ public class AuthController {
         }
 
         AuthService.AuthUser authUser = new SimpleWebAuthServiceImpl.SimpleWebAuthUserImpl(username);
+        request.getSession().setMaxInactiveInterval(expire);
         request.getSession().setAttribute(SimpleWebAuthServiceImpl.WEB_SESSION_KEY, authUser);
         return Result.ofSuccess(authUser);
     }
